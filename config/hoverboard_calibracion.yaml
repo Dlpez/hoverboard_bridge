@@ -1,0 +1,11 @@
+# Generado por: ros2 run hoverboard_bridge calibrar
+# 2026-11-10 18:17  comando de prueba 80, speed positivo = atras
+rpm_sign_left: -1
+rpm_sign_right: 1
+tick_sign_left: -1
+tick_sign_right: -1
+ticks_per_rev_measured: [90.6, 90.0]
+# [f_izq, f_der] (RPM hacia adelante) = mix @ [speed, steer]
+mix: [-0.99375, -0.49375, -1.00591, 0.49307]
+# Las ruedas del firmware están cruzadas respecto del robot (giro invertido, probado 10-11-2026)
+swap_wheels: true

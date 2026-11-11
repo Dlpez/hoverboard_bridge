@@ -1,0 +1,43 @@
+# Configuración del puente hoverboard_bridge para MILO (probada en el robot real el 10-11-2026).
+# La carga robot.launch.py (driver:=bridge). La calibración de ruedas está en
+# hoverboard_calibracion.yaml (misma carpeta); se regenera con:
+#   ros2 run hoverboard_bridge calibrar --port <puerto>   (RUEDAS EN EL AIRE)
+# y se copia aquí desde ~/.ros/hoverboard_calibracion.yaml.
+hoverboard_bridge:
+  ros__parameters:
+    baud_rate: 115200
+    # Geometría
+    wheel_radius: 0.08255         # [m] rueda de hoverboard 6.5"
+    # Separación EFECTIVA para la odometría. Física medida: 0.32 m (centro a centro de los
+    # neumáticos). Calibrada con el lidar (ICP, 1 vuelta en el lugar): 0.32 * 1.081 = 0.346
+    # (las ruedas patinan al girar). URDF/CAD dicen 0.3604.
+    wheel_separation: 0.346
+    ticks_per_rev: 90.0           # pasos Hall por vuelta (medido: 90.6 / 90.0)
+    # El firmware cuenta 0..8999 (wrap en protocolo.py, ENCODER_WRAP = 9000)
+    # Límites
+    max_command: 400              # tope de |speed| y |steer| al firmware (de 1000)
+    max_linear: 1.67              # [m/s] = 6 km/h
+    max_angular: 0.4              # [rad/s] giro lento (~23°/s)
+    # Rampas: acelerar suave, frenar un poco más fuerte
+    linear_accel: 0.5             # [m/s²] 0 -> 6 km/h en ~3.3 s
+    linear_decel: 1.0             # [m/s²]
+    angular_accel: 0.8            # [rad/s²]
+    angular_decel: 1.2            # [rad/s²]
+    # PI propio sobre RPM: APAGADO (el firmware ya controla velocidad; con PI temblaba al frenar)
+    kp: 0.0
+    ki: 0.0
+    integral_limit: 40.0
+    # Seguridad / robustez
+    cmd_timeout: 0.5              # [s] sin cmd_vel -> parar
+    feedback_timeout: 0.5         # [s] sin feedback del hoverboard -> parar
+    stall_reopen: 1.5             # [s] puerto abierto pero mudo (CH340 colgado) -> reabrir
+    rate: 50.0                    # [Hz]
+    # Frames / joints
+    odom_frame: odom
+    base_frame: base_footprint
+    publish_tf: true
+    left_joint: left_wheel_joint
+    right_joint: right_wheel_joint
+    # Batería 10S
+    bat_full: 42.0
+    bat_empty: 33.0
